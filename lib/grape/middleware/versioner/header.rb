@@ -5,10 +5,11 @@ module Grape
     module Versioner
       # This middleware sets various version related rack environment variables
       # based on the HTTP Accept header with the pattern:
-      # application/vnd.:vendor-:version+:format
+      # application/vnd.:vendor[.-]:version+:format
       #
       # Example: For request header
       #    Accept: application/vnd.mycompany-v1+json
+      #    Accept: application/vnd.mycompany.v1+json
       #
       # The following rack env variables are set:
       #
@@ -48,7 +49,7 @@ module Grape
             env['api.type']    = type
             env['api.subtype'] = subtype
 
-            if /\Avnd\.([a-z0-9*.]+)(?:-([a-z0-9*\-.]+))?(?:\+([a-z0-9*\-.+]+))?\z/ =~ subtype
+            if /\Avnd\.([a-z0-9*.]+)(?:[.-]([a-z0-9*\-.]+))?(?:\+([a-z0-9*\-.+]+))?\z/ =~ subtype
               env['api.vendor']  = Regexp.last_match[1]
               env['api.version'] = Regexp.last_match[2]
               env['api.format']  = Regexp.last_match[3]  # weird that Grape::Middleware::Formatter also does this
